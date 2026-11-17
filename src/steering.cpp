@@ -3,8 +3,8 @@
 #include <ESP32Servo.h>
 
 constexpr int CENTER_ANGLE = 90;
-constexpr int MAX_TURN     = 45;
-constexpr float DEADZONE_PERCENT = 1.0f;
+constexpr int MAX_TURN     = 85;
+constexpr float DEADZONE_PERCENT = 2.5f;
 
 static Servo servo;
 

@@ -17,6 +17,7 @@ constexpr MotorPins MOTORS[] = {
   {   33,  32,   23,    39,   false },   // RB
 };
 constexpr size_t MOTOR_COUNT = sizeof(MOTORS) / sizeof(MOTORS[0]);
+constexpr size_t FRONT_MOTORS = 2;  // MOTORS[0..1] are the front wheels
 
 constexpr uint8_t SERVO_PIN = 14;
 

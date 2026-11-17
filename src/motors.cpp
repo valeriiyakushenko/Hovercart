@@ -36,17 +36,26 @@ static void setDirection(Direction dir) {
   currentDir = dir;
 }
 
-static void setBrake(bool on) {
-  for (const MotorPins& m : MOTORS) {
-    digitalWrite(m.brake, on ? BRAKE_ACTIVE_LEVEL : !BRAKE_ACTIVE_LEVEL);
+static void setBrake(bool front, bool rear) {
+  for (size_t i = 0; i < MOTOR_COUNT; i++) {
+    bool on = i < FRONT_MOTORS ? front : rear;
+    digitalWrite(MOTORS[i].brake, on ? BRAKE_ACTIVE_LEVEL : !BRAKE_ACTIVE_LEVEL);
   }
+}
+
+static float powerLimit = 1.0f;
+static bool rearOnly = false;
+
+void motorsSetMode(float limit, bool rearWheelDrive) {
+  powerLimit = limit;
+  rearOnly = rearWheelDrive;
 }
 
 static void setPower(uint8_t value) {
   float t = value / 255.0f;
-  uint32_t duty = t * t * PWM_MAX;
+  uint32_t duty = t * t * PWM_MAX * powerLimit;
   for (size_t i = 0; i < MOTOR_COUNT; i++) {
-    ledcWrite(PWM_CHANNEL_0 + i, duty);
+    ledcWrite(PWM_CHANNEL_0 + i, rearOnly && i < FRONT_MOTORS ? 0 : duty);
   }
 }
 
@@ -62,13 +71,15 @@ void motorsBegin() {
   }
   setPower(0);
   setDirection(Direction::Forward);
-  setBrake(false);
+  setBrake(false, false);
 }
 
-void motorsUpdate(uint8_t forward, uint8_t reverse, bool brake) {
-  if (brake) {
+void motorsUpdate(uint8_t forward, uint8_t reverse, bool brakeFront, bool brakeRear) {
+  // Braking a driven axle cuts power. A front-only brake in rear-wheel drive
+  // keeps the rear wheels powered (burnout).
+  if (brakeRear || (brakeFront && !rearOnly)) {
     phase = Phase::Drive;
-    setBrake(true);
+    setBrake(brakeFront, brakeRear);
     setPower(0);
     return;
   }
@@ -79,7 +90,7 @@ void motorsUpdate(uint8_t forward, uint8_t reverse, bool brake) {
 
   if (throttle == 0 || wanted == currentDir) {
     phase = Phase::Drive;
-    setBrake(false);
+    setBrake(brakeFront, false);
     setPower(throttle);
     return;
   }
@@ -88,9 +99,9 @@ void motorsUpdate(uint8_t forward, uint8_t reverse, bool brake) {
   if (phase == Phase::Drive) phase = Phase::Braking;
 
   if (phase == Phase::Braking) {
-    setBrake(true);
+    setBrake(true, true);
     if (!allWheelsStopped()) return;
-    setBrake(false);
+    setBrake(brakeFront, false);
     settleStartMs = millis();
     phase = Phase::Settling;
     return;
