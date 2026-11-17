@@ -1,6 +1,15 @@
 # Hovercart
 
+<!-- Cover image: add a hero photo here to show up as the repo cover on GitHub -->
+<!-- ![Hovercart cover](docs/cover.jpg) -->
+
 Radio-controlled car built from a hoverboard — four BLDC motors, ESP32, and a PS5 DualSense controller over Bluetooth.
+
+[![PlatformIO](https://img.shields.io/badge/PlatformIO-3.5.0-208844?style=for-the-badge&logo=platformio)](https://platformio.org/)
+[![ESP32](https://img.shields.io/badge/ESP32-Espressif-000000?style=for-the-badge&logo=espressif)](https://www.espressif.com/)
+[![Arduino](https://img.shields.io/badge/Arduino-1.8.19-00979D?style=for-the-badge&logo=arduino)](https://www.arduino.cc/)
+[![Bluetooth](https://img.shields.io/badge/Bluetooth-LE-0082C9?style=for-the-badge&logo=bluetooth)](https://en.wikipedia.org/wiki/Bluetooth_Low_Energy)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
 ## Hardware
 
@@ -94,16 +103,27 @@ The controller MAC address is set via `build_flags` in `platformio.ini`. Change 
 ## File structure
 
 ```
-src/
-├── main.cpp      — Main loop, mode menu, setup
-├── motors.cpp    — LEDC PWM, direction switching, wheel stop detection
-├── motors.h
-├── steering.cpp  — Servo control with deadzone
-├── steering.h
-├── controller.cpp — PS5 DualSense Bluetooth wrapper, lightbar control
-├── controller.h
-└── wiring.h      — Pin definitions for all motors, servo, LED
+Hovercart/
+├── src/
+│   ├── main.cpp      — Main loop, mode menu, setup
+│   ├── motors.cpp    — LEDC PWM, direction switching, wheel stop detection
+│   ├── motors.h
+│   ├── steering.cpp  — Servo control with deadzone
+│   ├── steering.h
+│   ├── controller.cpp — PS5 DualSense Bluetooth wrapper, lightbar control
+│   ├── controller.h
+│   └── wiring.h      — Pin definitions for all motors, servo, LED
+├── docs/             — Photos, wiring diagram, video
+└── hardware/         — 3D models, PCB files, mechanical drawings
 ```
+
+## Resources
+
+- [ZS-X11H v2 Datasheet](https://www.aliexpress.com/item/1005005869284018.html) — motor driver module
+- [ps5-esp32 library](https://github.com/rodneybakiskan/ps5-esp32) — PS5 controller Bluetooth library
+- [ESP32Servo](https://github.com/madhephaestus/ESP32Servo) — servo library for ESP32
+- [PlatformIO](https://platformio.org/) — build system
+- [ESP32 LEDC](https://docs.platformio.org/en/latest/platforms/espressif32.html) — LEDC PWM peripheral docs
 
 ## License
 
